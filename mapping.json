@@ -1,0 +1,13 @@
+{
+  "mappings": {
+    "properties": {
+      "window_start": { "type": "date", "format": "epoch_millis" },
+      "window_end":   { "type": "date", "format": "epoch_millis" },
+      "symbol":       { "type": "keyword" },
+      "avg_price":    { "type": "double" },
+      "min_price":    { "type": "double" },
+      "max_price":    { "type": "double" },
+      "doc_id":       { "type": "keyword" }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# Modello generato da ml_train.py
+model/
+model_threshold.json
+
+# File temporanei di Python
+__pycache__/
+*.pyc
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+.vscode/

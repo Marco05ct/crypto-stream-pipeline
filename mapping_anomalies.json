@@ -1,0 +1,14 @@
+{
+  "mappings": {
+    "properties": {
+      "doc_id":         { "type": "keyword" },
+      "symbol":         { "type": "keyword" },
+      "window_start":   { "type": "date", "format": "epoch_millis" },
+      "avg_price":      { "type": "double" },
+      "volatility_pct": { "type": "double" },
+      "drift_pct":      { "type": "double" },
+      "anomaly_score":  { "type": "double" },
+      "is_anomaly":     { "type": "integer" }
+    }
+  }
+}
