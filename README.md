@@ -1,8 +1,8 @@
-\# Crypto Stream Pipeline
+# Crypto Stream Pipeline
 
 
 
-Progetto conclusivo del corso \*\*Technologies for Advanced Programming\*\* (A.A. 2025-2026).
+Progetto conclusivo del corso **Technologies for Advanced Programming** (A.A. 2025-2026).
 
 
 
@@ -10,7 +10,7 @@ Pipeline di stream processing che acquisisce in tempo reale i prezzi di Bitcoin,
 
 
 
-\## Architettura
+## Architettura
 
 
 
@@ -34,9 +34,9 @@ Binance API -> producer.py -> Kafka -> Spark Structured Streaming -> Elasticsear
 
 | Apache Kafka | Coda di messaggi che separa chi produce i dati da chi li elabora |
 
-| `spark\_job.py` | Spark Structured Streaming: finestre da 30 secondi per ogni crypto (media, minimo, massimo, volatilità, deriva) e applicazione del modello ML |
+| `spark_job.py` | Spark Structured Streaming: finestre da 30 secondi per ogni crypto (media, minimo, massimo, volatilità, deriva) e applicazione del modello ML |
 
-| `ml\_train.py` | Addestra il modello KMeans sullo storico letto da Kafka, salva modello e soglia |
+| `ml_train.py` | Addestra il modello KMeans sullo storico letto da Kafka, salva modello e soglia |
 
 | Elasticsearch | Indici `crypto-stats` (statistiche) e `crypto-anomalies` (anomalie) |
 
@@ -44,7 +44,7 @@ Binance API -> producer.py -> Kafka -> Spark Structured Streaming -> Elasticsear
 
 
 
-\## Machine Learning
+## Machine Learning
 
 
 
@@ -52,23 +52,23 @@ Per ogni finestra da 30 secondi si calcolano due caratteristiche:
 
 
 
-\- \*\*volatilità %\*\*: (massimo - minimo) / media
+- **volatilità %**: (massimo - minimo) / media
 
-\- \*\*deriva %\*\*: (ultimo prezzo - primo prezzo) / media
-
-
-
-`ml\_train.py` addestra un modello \*\*KMeans\*\* (Spark MLlib, k=3) su tutto lo storico. Una finestra è \*\*anomala\*\* se la distanza dal centro del suo cluster supera la soglia `media + 2 x deviazione standard`. Il modello viene addestrato in batch, poi applicato in streaming a ogni nuova finestra da `spark\_job.py`.
+- **deriva %**: (ultimo prezzo - primo prezzo) / media
 
 
 
-\## Requisiti
+`ml_train.py` addestra un modello **KMeans** (Spark MLlib, k=3) su tutto lo storico. Una finestra è **anomala** se la distanza dal centro del suo cluster supera la soglia `media + 2 x deviazione standard`. Il modello viene addestrato in batch, poi applicato in streaming a ogni nuova finestra da `spark_job.py`.
 
 
 
-\- Docker Desktop
+## Requisiti
 
-\- Python 3.12 con le librerie `kafka-python-ng` e `requests`
+
+
+- Docker Desktop
+
+- Python 3.12 con le librerie `kafka-python-ng` e `requests`
 
 
 
@@ -80,11 +80,11 @@ pip install kafka-python-ng requests
 
 
 
-\## Come avviare il progetto
+## Come avviare il progetto
 
 
 
-1\. \*\*Avviare Kafka, Elasticsearch e Kibana\*\*
+1. **Avviare Kafka, Elasticsearch e Kibana**
 
 
 
@@ -96,7 +96,7 @@ docker compose up -d
 
 
 
-2\. \*\*Creare il topic Kafka\*\* (solo la prima volta)
+2. **Creare il topic Kafka** (solo la prima volta)
 
 
 
@@ -108,7 +108,7 @@ docker exec kafka /opt/kafka/bin/kafka-topics.sh --create --topic crypto-prices 
 
 
 
-3\. \*\*Creare l'immagine Spark con numpy\*\* (solo la prima volta)
+3. **Creare l'immagine Spark con numpy** (solo la prima volta)
 
 
 
@@ -120,7 +120,7 @@ docker build -t spark-ml -f Dockerfile.spark .
 
 
 
-4\. \*\*Creare gli indici Elasticsearch con i tipi corretti\*\* (solo la prima volta)
+4. **Creare gli indici Elasticsearch con i tipi corretti** (solo la prima volta)
 
 
 
@@ -128,13 +128,13 @@ docker build -t spark-ml -f Dockerfile.spark .
 
 curl.exe -X PUT http://localhost:9200/crypto-stats -H "Content-Type: application/json" -d "@mapping.json"
 
-curl.exe -X PUT http://localhost:9200/crypto-anomalies -H "Content-Type: application/json" -d "@mapping\_anomalies.json"
+curl.exe -X PUT http://localhost:9200/crypto-anomalies -H "Content-Type: application/json" -d "@mapping_anomalies.json"
 
 ```
 
 
 
-5\. \*\*Avviare il producer\*\* (lasciarlo acceso per raccogliere dati)
+5. **Avviare il producer** (lasciarlo acceso per raccogliere dati)
 
 
 
@@ -146,39 +146,39 @@ python producer.py
 
 
 
-6\. \*\*Addestrare il modello\*\* (dopo aver raccolto un po' di dati, almeno qualche decina di minuti)
+6. **Addestrare il modello** (dopo aver raccolto un po' di dati, almeno qualche decina di minuti)
 
 
 
 ```
 
-docker run --rm --network crypto-pipeline\_default -v "${PWD}:/app" spark-ml /opt/spark/bin/spark-submit --conf spark.jars.ivy=/tmp/.ivy --packages org.apache.spark:spark-sql-kafka-0-10\_2.12:3.5.3,org.elasticsearch:elasticsearch-spark-30\_2.12:8.15.3 /app/ml\_train.py
+docker run --rm --network crypto-pipeline_default -v "${PWD}:/app" spark-ml /opt/spark/bin/spark-submit --conf spark.jars.ivy=/tmp/.ivy --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3,org.elasticsearch:elasticsearch-spark-30_2.12:8.15.3 /app/ml_train.py
 
 ```
 
 
 
-7\. \*\*Avviare Spark in streaming\*\* (lasciarlo acceso)
+7. **Avviare Spark in streaming** (lasciarlo acceso)
 
 
 
 ```
 
-docker run --rm --network crypto-pipeline\_default -v "${PWD}:/app" spark-ml /opt/spark/bin/spark-submit --conf spark.jars.ivy=/tmp/.ivy --packages org.apache.spark:spark-sql-kafka-0-10\_2.12:3.5.3,org.elasticsearch:elasticsearch-spark-30\_2.12:8.15.3 /app/spark\_job.py
+docker run --rm --network crypto-pipeline_default -v "${PWD}:/app" spark-ml /opt/spark/bin/spark-submit --conf spark.jars.ivy=/tmp/.ivy --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3,org.elasticsearch:elasticsearch-spark-30_2.12:8.15.3 /app/spark_job.py
 
 ```
 
 
 
-8\. \*\*Kibana\*\*: aprire http://localhost:5601, creare le data view `crypto-stats` e `crypto-anomalies` (campo temporale `window\_start`) e costruire i grafici con Lens.
+8. **Kibana**: aprire http://localhost:5601, creare le data view `crypto-stats` e `crypto-anomalies` (campo temporale `window_start`) e costruire i grafici con Lens.
 
 
 
-Nota: il nome della rete Docker (`crypto-pipeline\_default`) dipende dal nome della cartella del progetto.
+Nota: il nome della rete Docker (`crypto-pipeline_default`) dipende dal nome della cartella del progetto.
 
 
 
-\## Per fermare tutto
+## Per fermare tutto
 
 
 
