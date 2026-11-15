@@ -2,7 +2,7 @@
 
 
 
-Progetto conclusivo del corso **Technologies for Advanced Programming** (A.A. 2025-2026).
+Progetto conclusivo del corso **Technologies for Advanced Programming** (A.A. 2026-2027).
 
 
 
